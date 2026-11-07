@@ -86,7 +86,7 @@
       s = bw / SW; stage.style.left = "0px"; stage.style.top = "0px";
     }
     stage.style.transform = "scale(" + s + ")";
-    if (DEBUG) dbg("v30 " + (full ? "PHONE-" + mode : "desktop") + "  win " + innerWidth + "x" + innerHeight + "  box " + bw + "x" + bh +
+    if (DEBUG) dbg("v31 " + (full ? "PHONE-" + mode : "desktop") + "  win " + innerWidth + "x" + innerHeight + "  box " + bw + "x" + bh +
       "  stage " + SW + "x" + SH + "  standalone " + (navigator.standalone === true) +
       "  scale " + s.toFixed(3) + "  left " + Math.round(parseFloat(stage.style.left)) + "  top " + Math.round(parseFloat(stage.style.top)));
   }
@@ -331,8 +331,21 @@
   // ---------- highscore (local; replace load/save/submit with server calls later) ----------
   var keyOf = function (m) { return m === "p" ? STORE_P : STORE_L; };
   // Landscape keeps the 2007 scores; the portrait list starts empty (the original game was landscape only).
+  // Stored data is untrusted (anyone can edit their own localStorage): only accept well-formed entries, clamp the lengths.
   function load(m) {
-    try { var raw = localStorage.getItem(keyOf(m)); if (raw) return JSON.parse(raw); } catch (e) {}
+    try {
+      var raw = localStorage.getItem(keyOf(m));
+      if (raw) {
+        var a = JSON.parse(raw);
+        if (Array.isArray(a)) {
+          return a.filter(function (e) {
+            return e && typeof e.name === "string" && e.name.length > 0 && typeof e.time === "number" && isFinite(e.time) && e.time > 0;
+          }).slice(0, 500).map(function (e) {
+            return { name: e.name.slice(0, 20), time: Math.round(e.time * 1000) / 1000, date: String(e.date || "").slice(0, 19) };
+          });
+        }
+      }
+    } catch (e) {}
     return m === "p" ? [] : SEED.slice();
   }
   // returns true only if the data can really be read back (storage can be blocked or full on some phones)

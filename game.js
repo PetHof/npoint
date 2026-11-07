@@ -86,7 +86,7 @@
       s = bw / SW; stage.style.left = "0px"; stage.style.top = "0px";
     }
     stage.style.transform = "scale(" + s + ")";
-    if (DEBUG) dbg("v31 " + (full ? "PHONE-" + mode : "desktop") + "  win " + innerWidth + "x" + innerHeight + "  box " + bw + "x" + bh +
+    if (DEBUG) dbg("v32 " + (full ? "PHONE-" + mode : "desktop") + "  win " + innerWidth + "x" + innerHeight + "  box " + bw + "x" + bh +
       "  stage " + SW + "x" + SH + "  standalone " + (navigator.standalone === true) +
       "  scale " + s.toFixed(3) + "  left " + Math.round(parseFloat(stage.style.left)) + "  top " + Math.round(parseFloat(stage.style.top)));
   }
@@ -446,6 +446,20 @@
   if (reqFS && (document.fullscreenEnabled || document.webkitFullscreenEnabled)) $("fsWrap").hidden = false;
   var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   if (isIOS && !navigator.standalone && $("fsWrap").hidden) { $("iosHint").hidden = false; $("rotTip").hidden = false; }
+  // Visible hint on the start screen: phones in a normal browser are told how to get the bar-free fullscreen app.
+  (function () {
+    var standalone = navigator.standalone === true || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
+    var phone = isTouch() && Math.min(screen.width, screen.height) <= 500, gone = false;
+    try { gone = localStorage.getItem("npoint.a2hs") === "1"; } catch (e) {}
+    if (!phone || standalone || gone) return;
+    $("a2hsTxt").textContent = isIOS ? "Fullscreen: tap Share, then \u201CAdd to Home Screen\u201D."
+                                     : "Fullscreen: browser menu \u22EE, then \u201CAdd to Home screen\u201D.";
+    $("a2hs").hidden = false;
+    $("a2hsX").addEventListener("click", function (e) {
+      e.preventDefault(); $("a2hs").hidden = true;
+      try { localStorage.setItem("npoint.a2hs", "1"); } catch (err) {}
+    });
+  })();
   $("fs").addEventListener("click", function (e) {
     e.preventDefault();
     try {

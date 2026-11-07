@@ -141,3 +141,9 @@ body.pt #again { left: 185px; }
 #hsNote { font-size: 14px; max-width: 520px; margin: 4px auto 8px; min-height: 0; }
 #hsNote:empty { display: none; }
 #hs tr.me td:not(:nth-child(3)) { background: #fff3a0; }
+
+/* "add to home screen" hint on the start screen (phones in a normal browser only) */
+#a2hs { position: absolute; left: 12px; right: 12px; bottom: 8px; padding: 6px 34px 6px 12px; text-align: center;
+  font: 15px/1.25 Arial, Helvetica, sans-serif; color: #102030; background: rgba(255,255,255,.6); border-radius: 6px; }
+#a2hsX { position: absolute; right: 4px; top: 1px; padding: 4px 8px; font-size: 18px; text-decoration: none; color: #000; }
+body.pt #a2hs { bottom: 14px; font-size: 16px; }

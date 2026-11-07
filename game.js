@@ -37,7 +37,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var stage = $("stage"), wrap = $("wrap");
   var screens = { pre: $("s-pre"), ready: $("s-ready"), game: $("s-game"), res: $("s-res") };
-  var nameIn = $("name"), sendBtn = $("send");
+  var nameIn = $("pname"), playerName = "";
 
   function tier(t) { for (var i = 0; i < TIERS.length; i++) if (t < TIERS[i][0]) return TIERS[i]; }
   function show(which) { for (var k in screens) screens[k].hidden = (k !== which); stage.setAttribute("data-screen", which); }
@@ -86,7 +86,7 @@
       s = bw / SW; stage.style.left = "0px"; stage.style.top = "0px";
     }
     stage.style.transform = "scale(" + s + ")";
-    if (DEBUG) dbg("v32 " + (full ? "PHONE-" + mode : "desktop") + "  win " + innerWidth + "x" + innerHeight + "  box " + bw + "x" + bh +
+    if (DEBUG) dbg("v33 " + (full ? "PHONE-" + mode : "desktop") + "  win " + innerWidth + "x" + innerHeight + "  box " + bw + "x" + bh +
       "  stage " + SW + "x" + SH + "  standalone " + (navigator.standalone === true) +
       "  scale " + s.toFixed(3) + "  left " + Math.round(parseFloat(stage.style.left)) + "  top " + Math.round(parseFloat(stage.style.top)));
   }
@@ -315,17 +315,43 @@
     if (next > COUNT) finish();
   });
 
+  var fmt = function (x) { return String(Math.round(x * 1000) / 1000); };
+  function showStatus(res) {
+    var el = $("status"), txt, cls = "";
+    if (!res.ok) { txt = "Could not save the score (storage blocked or private mode)."; cls = "bad"; }
+    else if (res.st === "new") { txt = "Added to the highscore \u00B7 rank " + res.rank; cls = "good"; }
+    else if (res.st === "better") { txt = "New personal best! " + fmt(res.prev - finalTime) + " s faster (before: " + res.prev + " s) \u00B7 rank " + res.rank; cls = "good"; }
+    else if (finalTime === res.prev) { txt = "Same as your best (" + res.prev + " s) \u00B7 rank " + res.rank; }
+    else { txt = "+" + fmt(finalTime - res.prev) + " s slower than your best (" + res.prev + " s) \u00B7 rank " + res.rank; cls = "bad"; }
+    el.textContent = txt; el.className = cls;
+  }
   function finish() {
     finalTime = Math.round(performance.now() - startTime) / 1000;
     locked = true;
     var t = tier(finalTime);
     $("msg").textContent = "You Clicked all the blocks\nin " + finalTime + " seconds\n\n" + t[4];
-    sendBtn.disabled = false; sendBtn.textContent = "Send Score";
+    var res = submit(gameMode, playerName, finalTime);       // the name was asked before the round: compare + save automatically
+    lastName = playerName; viewMode = gameMode;
+    showStatus(res); render();
+    $("whoName").textContent = playerName;
     show("res");
     [523, 659, 784].forEach(function (f, i) { tone(f, 0.18, "triangle", 0.1, i * 0.12); });
   }
 
-  $("play").addEventListener("click", function () { audio(); startMusic(); toReady(); });
+  function startGame() {
+    var name = nameIn.value.trim();
+    if (!name || name === "Playername") {                    // a name is needed so the time can be compared and saved
+      nameIn.classList.add("bad"); nameIn.focus();
+      setTimeout(function () { nameIn.classList.remove("bad"); }, 1200);
+      return;
+    }
+    playerName = name;
+    try { localStorage.setItem(NAME_KEY, name); } catch (e) {}
+    nameIn.blur();                                           // closes the iOS keyboard
+    audio(); startMusic(); toReady();
+  }
+  $("play").addEventListener("click", startGame);
+  nameIn.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); startGame(); } });
   $("again").addEventListener("click", function () { audio(); toReady(); });
 
   // ---------- highscore (local; replace load/save/submit with server calls later) ----------
@@ -360,17 +386,19 @@
   // Original rule: one entry per name; only a better time replaces the old one; "Playername" is ignored.
   // Returns what happened so the player is told: "new", "better" or "worse" (not better than their best), plus whether it was saved.
   function submit(m, name, time) {
-    var list = load(m), st = "new", best = time, found = false;
-    for (var i = 0; i < list.length; i++) {
+    var list = load(m), st = "new", prev = null, found = false, i;
+    for (i = 0; i < list.length; i++) {
       if (list[i].name === name) {
-        found = true; best = list[i].time;
-        if (time < list[i].time) { list[i] = { name: name, time: time, date: stamp() }; st = "better"; best = time; }
-        else st = "worse";
+        found = true; prev = list[i].time;
+        if (time < prev) { list[i] = { name: name, time: time, date: stamp() }; st = "better"; } else st = "worse";
         break;
       }
     }
     if (!found) list.push({ name: name, time: time, date: stamp() });
-    return { st: st, best: best, ok: st === "worse" ? true : save(m, list) };
+    var ok = st === "worse" ? true : save(m, list);
+    var sorted = list.slice().sort(function (a, b) { return a.time - b.time; }), rank = 0;
+    for (i = 0; i < sorted.length; i++) if (sorted[i].name === name) { rank = i + 1; break; }
+    return { st: st, prev: prev, ok: ok, rank: rank };
   }
 
   function render() {
@@ -390,42 +418,9 @@
     });
   }
 
-  // iOS ignores select() on focus, so clear the placeholder-like default instead.
-  nameIn.addEventListener("focus", function () { if (nameIn.value === "Playername") nameIn.value = ""; });
-  nameIn.addEventListener("blur", function () { if (!nameIn.value.trim()) nameIn.value = "Playername"; });
-  try { var saved = localStorage.getItem(NAME_KEY); if (saved) nameIn.value = saved; } catch (e) {}
-
-  $("scoreForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-    var name = nameIn.value.trim();
-    if (sent) return;
-    if (!name || name === "Playername") {            // visible feedback instead of doing nothing
-      nameIn.style.background = "#ffb3b3"; sendBtn.textContent = "Enter name!";
-      setTimeout(function () { nameIn.style.background = ""; if (!sent) sendBtn.textContent = "Send Score"; }, 1200);
-      return;
-    }
-    var res = submit(gameMode, name, finalTime);
-    nameIn.blur();                                   // closes the iOS keyboard
-    if (!res.ok) {                                   // storage blocked: say so instead of pretending
-      sendBtn.textContent = "Not saved!";
-      setTimeout(function () { if (!sent) sendBtn.textContent = "Send Score"; }, 2000);
-      $("hsNote").textContent = "Your browser would not save the score (storage blocked or private mode).";
-      return;
-    }
-    try { localStorage.setItem(NAME_KEY, name); } catch (err) {}
-    lastName = name; viewMode = gameMode;
-    sent = true; sendBtn.disabled = true;
-    sendBtn.textContent = res.st === "worse" ? "Not better" : "Sent";
-    $("hsNote").textContent =
-      res.st === "worse" ? "Your time (" + finalTime + " s) is not better than your best (" + res.best + " s). Only the best time per name is kept \u2013 use another name to get a new entry."
-      : res.st === "better" ? "New personal best!" : "Added to the list.";
-    render();
-    if (document.body.classList.contains("ls")) {    // on phones the table lives in the overlay: open it and show the row
-      setTimeout(function () {
-        document.body.classList.add("menu");
-        var me = document.querySelector("#scores tr.me"); if (me) try { me.scrollIntoView({ block: "center" }); } catch (e) {}
-      }, 200);
-    }
+  try { var saved = localStorage.getItem(NAME_KEY); if (saved) nameIn.value = saved.slice(0, 20); } catch (e) {}
+  $("chgName").addEventListener("click", function (e) {
+    e.preventDefault(); show("pre"); nameIn.focus(); try { nameIn.select(); } catch (err) {}
   });
   $("refresh").addEventListener("click", function (e) { e.preventDefault(); render(); });
   $("menuBtn").addEventListener("click", function () { viewMode = mode; $("hsNote").textContent = ""; render(); document.body.classList.add("menu"); });

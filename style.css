@@ -16,7 +16,7 @@ a { color: #000; }
 #stage { position: absolute; left: 0; top: 0; width: 616px; height: 352px; background: #99ccff; overflow: hidden;
   transform-origin: 0 0; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent; touch-action: none; }
-#scoreForm, #scoreForm * { touch-action: manipulation; }
+#again, #pname, #chgName { touch-action: manipulation; }
 .scr { position: absolute; inset: 0; }
 [hidden] { display: none !important; }
 
@@ -25,9 +25,9 @@ a { color: #000; }
   transition: left 3.2s linear, top 3.2s linear; }
 
 /* start screen: one big button in the middle */
-#title { position: absolute; left: 0; right: 0; top: 40px; text-align: center; font: bold 54px "Times New Roman", Times, serif; letter-spacing: 8px; }
-#howto { position: absolute; left: 0; right: 0; top: 118px; text-align: center; font: 24px/1.3 "Times New Roman", Times, serif; }
-#play { position: absolute; left: 50%; top: 214px; width: 240px; height: 84px; margin-left: -120px; background: #000; color: #fff; border: 0;
+#title { position: absolute; left: 0; right: 0; top: 24px; text-align: center; font: bold 54px "Times New Roman", Times, serif; letter-spacing: 8px; }
+#howto { position: absolute; left: 0; right: 0; top: 92px; text-align: center; font: 24px/1.3 "Times New Roman", Times, serif; }
+#play { position: absolute; left: 50%; top: 224px; width: 240px; height: 72px; margin-left: -120px; background: #000; color: #fff; border: 0;
   font: 42px "Times New Roman", Times, serif; letter-spacing: 4px; cursor: pointer; padding: 0; }
 #play:hover, #play:active { background: #444; }
 
@@ -55,15 +55,19 @@ a { color: #000; }
 #zlogo { position: absolute; left: 18px; top: 38px; width: 36px; height: 36px; border-radius: 50%; background: #3ab51a; border: 3px solid #fff;
   color: #fff; font: bold 24px Arial, sans-serif; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 1px #2c8a14; }
 #mod { position: absolute; left: 34px; top: 82px; writing-mode: vertical-rl; font: 26px "Times New Roman", serif; color: #000; transform-origin: center; }
-#scoreForm { position: absolute; left: 0; right: 0; bottom: 8px; margin: 0; }
-#name { position: absolute; left: 22px; bottom: 0; width: 240px; height: 33px; text-align: center; font: 24px "Times New Roman", serif;
-  border: 1px dotted #667; background: #fff; padding: 0; }
-#send, #again { position: absolute; bottom: 0; height: 33px; width: 165px; background: #000; color: #fff; border: 0; padding: 0;
-  font: 24px "Times New Roman", serif; cursor: pointer; }
-#send { left: 269px; }
-#again { left: 441px; }
-#send:hover, #again:hover { background: #444; }
-#send:disabled { background: #555; cursor: default; }
+/* result screen: status line (auto-saved score), who is playing, play again */
+#status { position: absolute; left: 20px; right: 20px; top: 272px; text-align: center; font: bold 24px/28px "Times New Roman", Times, serif; }
+#status.good { color: #064d00; }
+#status.bad { color: #7a1020; }
+#who { position: absolute; left: 16px; bottom: 16px; font: 18px "Times New Roman", Times, serif; }
+#who a { color: #000; padding: 8px 4px; }
+#again { position: absolute; right: 10px; bottom: 8px; width: 260px; height: 42px; background: #000; color: #fff; border: 0; padding: 0;
+  font: 26px "Times New Roman", Times, serif; cursor: pointer; }
+#again:hover { background: #444; }
+/* name field on the start screen */
+#pname { position: absolute; left: 50%; top: 170px; width: 240px; height: 40px; margin-left: -120px; padding: 0; text-align: center;
+  font: 24px "Times New Roman", Times, serif; border: 1px dotted #667; border-radius: 0; background: #fff; }
+#pname.bad { background: #ffb3b3; }
 
 /* highscore */
 #hs { width: 100%; max-width: 600px; margin: 10px auto 0; border-spacing: 2px; font-size: 15px; }
@@ -124,19 +128,19 @@ body.ls #main { padding: 0; border-radius: 0; box-shadow: none; background: #99c
 #hsTabs a.on { color: #000; font-weight: bold; border-bottom: 2px solid #000; }
 
 /* phone held upright: tall stage (360 x ~810 units), 2-column grid, stacked buttons */
-body.pt #title { top: 150px; font-size: 44px; letter-spacing: 6px; }
-body.pt #howto { top: 228px; font-size: 22px; }
-body.pt #play { top: 330px; }
+body.pt #title { top: 110px; font-size: 44px; letter-spacing: 6px; }
+body.pt #howto { top: 186px; font-size: 22px; }
+body.pt #play { top: 340px; height: 84px; }
+body.pt #pname { top: 276px; width: 280px; margin-left: -140px; height: 46px; font-size: 26px; }
 body.pt #gr { font-size: 24px; }
 body.pt #gr.in { top: 250px; }
 body.pt #cd { top: 420px; }
 body.pt #msg { left: 0; right: 0; top: 110px; font-size: 30px; line-height: 40px; }
 body.pt #zlogo { left: 16px; top: 44px; }
 body.pt #mod { writing-mode: horizontal-tb; left: 62px; top: 50px; font-size: 18px; }
-body.pt #name { left: 20px; width: 320px; bottom: 100px; height: 44px; font-size: 26px; }
-body.pt #send, body.pt #again { height: 44px; width: 155px; bottom: 46px; font-size: 24px; }
-body.pt #send { left: 20px; }
-body.pt #again { left: 185px; }
+body.pt #status { top: 286px; left: 16px; right: 16px; font-size: 21px; line-height: 26px; }
+body.pt #who { left: 20px; bottom: 84px; }
+body.pt #again { left: 20px; right: 20px; width: auto; bottom: 22px; height: 48px; }
 
 #hsNote { font-size: 14px; max-width: 520px; margin: 4px auto 8px; min-height: 0; }
 #hsNote:empty { display: none; }
@@ -147,3 +151,9 @@ body.pt #again { left: 185px; }
   font: 15px/1.25 Arial, Helvetica, sans-serif; color: #102030; background: rgba(255,255,255,.6); border-radius: 6px; }
 #a2hsX { position: absolute; right: 4px; top: 1px; padding: 4px 8px; font-size: 18px; text-decoration: none; color: #000; }
 body.pt #a2hs { bottom: 14px; font-size: 16px; }
+
+/* highscore overlay: the "back to the game" bar stays at the top while scrolling */
+body.ls.menu #hsBox { padding: 0 18px 24px; }
+body.ls.menu #closeWrap { display: block; position: sticky; top: 0; z-index: 3; margin: 0 -18px 12px; background: #fff;
+  padding: max(12px, env(safe-area-inset-top, 0px)) 18px 10px; border-bottom: 1px solid #ccc; font-size: 20px; }
+#closeMenu { display: inline-block; padding: 6px 12px; }

@@ -13,7 +13,7 @@
 <meta name="theme-color" content="#99ccff">
 <meta name="robots" content="noindex, nofollow">
 <title>N-POINT</title>
-<link rel="stylesheet" href="style.css?v=32">
+<link rel="stylesheet" href="style.css?v=33">
 </head>
 <body>
 <div id="probe" aria-hidden="true"></div>
@@ -46,6 +46,7 @@
           <div id="s-pre" class="scr">
             <div id="title">N-POINT</div>
             <div id="howto">Click the numbers 1 to 15 in order<br>as fast as you can.</div>
+            <input id="pname" maxlength="20" placeholder="Your name" autocomplete="off" autocapitalize="words" aria-label="Your name">
             <button id="play" type="button">START</button>
             <div id="a2hs" hidden><span id="a2hsTxt"></span><a href="#" id="a2hsX" aria-label="Close hint">&#10005;</a></div>
           </div>
@@ -65,11 +66,9 @@
             <div id="zlogo">Z</div>
             <div id="mod">mod by n-way</div>
             <div id="msg"></div>
-            <form id="scoreForm" autocomplete="off">
-              <input id="name" maxlength="20" value="Playername" aria-label="Playername">
-              <button type="submit" id="send">Send Score</button>
-              <button type="button" id="again">Play Again</button>
-            </form>
+            <div id="status"></div>
+            <div id="who">Playing as <b id="whoName"></b> &middot; <a href="#" id="chgName">change</a></div>
+            <button type="button" id="again">Play Again</button>
           </div>
           <button id="menuBtn" type="button">Highscore</button>
         </div>
@@ -91,6 +90,6 @@
     </main>
   </div>
 </div>
-<script src="game.js?v=32"></script>
+<script src="game.js?v=33"></script>
 </body>
 </html>

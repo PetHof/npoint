@@ -7,6 +7,7 @@ A rebuild of the old Flash game **N-POINT**, a mod by *n-way* of **PoPoint 2** b
 
 - Plain HTML, CSS and JavaScript, no build step, no dependencies.
 - Works on phones: 5 x 3 blocks in landscape, 3 x 5 in portrait.
+- Enter your name before you start. After each round your time is compared with your best one automatically: a new best is saved and shows how much faster you were, a slower time shows the difference.
 - Highscores are separate for landscape and portrait and are stored in the browser (`localStorage`).
 - Add it to the iPhone home screen (Share, "Add to Home Screen") for fullscreen play.
 - Sound effects and the background music are generated in the browser. The music is an original composition written for this game (140 BPM, A minor) and is free to use (CC0).

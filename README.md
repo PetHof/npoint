@@ -3,7 +3,7 @@
 A browser game: click the numbers 1 to 15 in order, as fast as you can.
 A rebuild of the old Flash game **N-POINT**, a mod by *n-way* of **PoPoint 2** by **GaNt** (BleachEatingFreaks.com).
 
-**Play:** https://pethof.github.io/npoint.github.io/
+**Play:** https://pethof.github.io/npoint/
 
 - Plain HTML, CSS and JavaScript, no build step, no dependencies.
 - Works on phones: 5 x 3 blocks in landscape, 3 x 5 in portrait.

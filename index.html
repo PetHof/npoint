@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" class="boot">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="N-POINT">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#99ccff">
+<meta name="robots" content="noindex, nofollow">
+<title>N-POINT</title>
+<link rel="stylesheet" href="style.css?v=30">
+</head>
+<body>
+<div id="probe" aria-hidden="true"></div>
+<div id="probe2" aria-hidden="true"></div>
+<div id="rot" hidden>
+  <svg viewBox="0 0 200 140" width="200" height="140" aria-hidden="true">
+    <!-- arrow: counter-clockwise over the top, ending in a clear arrowhead -->
+    <path d="M139.8 22.5 A62 62 0 0 0 52.5 30.1" fill="none" stroke="#000" stroke-width="5" stroke-linecap="round"/>
+    <path d="M67.5 24.6 L52.5 30.1 L55.3 14.3" fill="none" stroke="#000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- phone: turns from portrait to landscape around its own centre -->
+    <g id="phone">
+      <rect x="76" y="30" width="48" height="80" rx="9" fill="#99ccff" stroke="#000" stroke-width="5"/>
+      <line x1="92" y1="39" x2="108" y2="39" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+      <line x1="92" y1="101" x2="108" y2="101" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+    </g>
+  </svg>
+  <p>Turn your phone sideways to play.</p>
+  <a href="#" id="rotSkip">play in portrait anyway</a>
+  <small id="rotTip" hidden>No address bar: tap Share &rarr; &ldquo;Add to Home Screen&rdquo; and open the game from there.</small>
+</div>
+
+<div id="page">
+  <div id="body">
+    <main id="main">
+      <div id="wrap">
+        <div id="stage">
+          <div id="rings"></div>
+
+          <!-- 1. start screen -->
+          <div id="s-pre" class="scr">
+            <div id="title">N-POINT</div>
+            <div id="howto">Click the numbers 1 to 15 in order<br>as fast as you can.</div>
+            <button id="play" type="button">START</button>
+          </div>
+
+          <!-- 2. get ready -->
+          <div id="s-ready" class="scr" hidden>
+            <div id="gr">&#9733; Get Ready &#9733;</div>
+            <div id="cd">4</div>
+          </div>
+
+          <!-- 3. game -->
+          <div id="s-game" class="scr" hidden></div>
+          <div id="flash" hidden></div>
+
+          <!-- 4. result -->
+          <div id="s-res" class="scr" hidden>
+            <div id="zlogo">Z</div>
+            <div id="mod">mod by n-way</div>
+            <div id="msg"></div>
+            <form id="scoreForm" autocomplete="off">
+              <input id="name" maxlength="20" value="Playername" aria-label="Playername">
+              <button type="submit" id="send">Send Score</button>
+              <button type="button" id="again">Play Again</button>
+            </form>
+          </div>
+          <button id="menuBtn" type="button">Highscore</button>
+        </div>
+      </div>
+
+      <div id="hsBox">
+        <p class="center" id="closeWrap"><a href="#" id="closeMenu" class="b">&#10005; back to the game</a></p>
+        <p class="center small"><a href="#" id="mute">sound: on</a><span id="fsWrap" hidden> &middot; <a href="#" id="fs">fullscreen</a></span></p>
+        <p class="center small" id="iosHint" hidden>Fullscreen on iPhone: tap Share &rarr; &ldquo;Add to Home Screen&rdquo;, then open it from there.</p>
+        <p class="center" id="hsTabs"><a href="#" id="tabL">Landscape</a><a href="#" id="tabP">Portrait</a></p>
+        <p class="center small" id="hsNote"></p>
+        <p class="center"><a href="#" id="refresh" class="b">refresh highscore</a></p>
+        <table id="hs">
+          <thead><tr><th>Name</th><th>Zeit</th><th>Level of Ownage</th><th>Datum</th></tr></thead>
+          <tbody id="scores"></tbody>
+        </table>
+        <p class="center small"><a href="#" id="reset">reset local highscore</a></p>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="game.js?v=30"></script>
+</body>
+</html>
